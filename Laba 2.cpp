@@ -18,7 +18,20 @@ public:
     double massa;
     double time;
     string name;
+    //transport(double val_power, double val_massa);
+    //double calculating_speed();
 };
+
+//transport::transport(double val_power, double val_massa)
+//{
+//    double power = val_power;
+//    double massa = val_massa;
+//}
+//
+//double transport::calculating_speed()
+//{
+//    return 735,5 * power / (0.02 * massa);
+//}
 
 void Print_Menu()
 {
@@ -44,7 +57,7 @@ void Input(int cnt)
         cin >> TS.mileage;
         TS.consump = 100 * TS.eng_capacity / TS.mileage;
         cout << "Потребление двигателя (л/км):" << TS.consump << endl;
-        cout << "Масса (кг):" << TS.massa << endl;
+        cout << "Масса (кг):" << endl;
         cin >> TS.massa;
         TS.speed = TS.power * 735.5 / (0.02 * TS.massa);
         cout << "Скорость транспортного средства (м/c):" << TS.speed;
