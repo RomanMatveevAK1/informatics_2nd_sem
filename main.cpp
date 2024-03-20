@@ -18,7 +18,8 @@ struct regular_polygon {
 void CountSquare(struct regular_polygon* reg_pol, int amount);
 void CountPerimeter(struct regular_polygon* reg_pol, int amount);
 void SetData(regular_polygon* reg_pol, int amount, int* output);
-regular_polygon* AddStruct(regular_polygon* reg_pol, int amount, int* output);
+regular_polygon* AddStruct(regular_polygon* reg_pol, int amount);
+int* output(int amount, int* output);
 int* max_square(struct regular_polygon* reg_pol, int amount);
 int* max_perimeter(struct regular_polygon* reg_pol, int amount);
 int* del_struct(int* output, int choosenForDelete);
@@ -26,6 +27,7 @@ void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output);
 void print(regular_polygon* OurPolygon, int amount, int* output);
 void check(regular_polygon* OurPolygon, int PolygonAmount, int* output);
 void submenu(regular_polygon* OurPolygon, int PolygonAmount);
+void coordinates(struct regular_polygon* reg_pol, int amount);
 
 
 int main()
@@ -36,11 +38,12 @@ int main()
     output[0] = 1;
     cout << "Hello!" << '\n';
     menu(OurPolygon, PolygonAmount, output);
-    /*double ang = ((reg_pol.count_sides - 2) * M_PI) / (reg_pol.count_sides);
-    double R = reg_pol.length / (2 * sin(M_PI / (reg_pol.count_sides)));*/
     return 0;
 }
 
+
+
+// Считаем площадь
 
 
 void CountSquare(struct regular_polygon* reg_pol, int amount)
@@ -54,6 +57,8 @@ void CountSquare(struct regular_polygon* reg_pol, int amount)
     }
 }
 
+// Считаем периметр
+
 
 void CountPerimeter(struct regular_polygon* reg_pol, int amount)
 {
@@ -61,33 +66,50 @@ void CountPerimeter(struct regular_polygon* reg_pol, int amount)
     cout << "Perimeter = " << reg_pol->perimeter << '\n';
 }
 
-regular_polygon* AddStruct(regular_polygon* reg_pol, int amount, int* output)
+
+// Создаём новую структуру и перезаписываем динамический массив структур
+
+regular_polygon* AddStruct(regular_polygon* reg_pol, int amount)
 {
     if (amount == 0)
     {
-        reg_pol = new regular_polygon[amount + 1];
+        reg_pol = new regular_polygon[amount];
     }
     else
     {
-        regular_polygon* temp = new regular_polygon[amount + 1];
-        int* temp2 = new int[amount + 1];
+        regular_polygon* temp = new regular_polygon[amount];
         for (int i = 0; i < amount; i++)
         {
             temp[i] = reg_pol[i];
-            temp2[i] = output[i];
         }
-        delete[] output;
-        delete[] reg_pol;
 
+        delete[] reg_pol;
         reg_pol = temp;
-        output = temp2;
+
     }
     return reg_pol;
 }
 
+int* AddOutput(int amount, int* output)
+{
+    if (amount != 0)
+    {
+        int* temp2 = new int[amount];
+        for (int i = 0; i < amount; i++)
+        {
+            temp2[i] = output[i];
+        }
+        delete[] output;
+        output = temp2;
+        output[amount] = 1;
+    }
+    return output;
+}
+
+// Заполняем новую структуру
+
 void SetData(regular_polygon* reg_pol, int amount, int* output)
 {
-    output[amount] = 1;
     cout << "Enter count of sides:" << '\n';
     cin >> reg_pol[amount].count_sides;
     bool flag = false;
@@ -118,6 +140,7 @@ void SetData(regular_polygon* reg_pol, int amount, int* output)
 
     cout << "Enter y:" << endl;
     cin >> reg_pol[amount].y[0];
+    coordinates(reg_pol, amount);
 }
 
 int* max_square(regular_polygon* reg_pol, int amount)
@@ -176,10 +199,10 @@ void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
     switch (choose)
     {
     case 1:
-        OurPolygon = AddStruct(OurPolygon, PolygonAmount, output);
+        OurPolygon = AddStruct(OurPolygon, PolygonAmount);
+        output = AddOutput(PolygonAmount, output);
         SetData(OurPolygon, PolygonAmount, output);
         PolygonAmount++;
-        
         break;
     case 2:
         cout << '\n';
@@ -302,7 +325,28 @@ void submenu(regular_polygon* OurPolygon, int PolygonAmount)
     return;
 }
 
-
+void coordinates(struct regular_polygon* reg_pol, int amount)
+{
+    double Radius = reg_pol[amount].length / (2 * sin(M_PI / (reg_pol[amount].count_sides)));
+    double alpha = 2 * M_PI / reg_pol[amount].count_sides;
+    double phi = atan(reg_pol[amount].y[0]/reg_pol[amount].x[0]);
+    double Rx = Radius*cos(phi);
+    double Ry = Radius*sin(phi);
+    double O_x = reg_pol[amount].x[0] - Rx;
+    double O_y = reg_pol[amount].y[0] - Ry;
+    double* gamma = new double[reg_pol[amount].count_sides];
+    gamma[0] = phi;
+    for (int i = 1; i < reg_pol[amount].count_sides; i++)
+    {
+        reg_pol[amount].x[i] = Rx + Radius * cos(gamma[i - 1] + alpha);
+        reg_pol[amount].y[i] = Ry + Radius * sin(gamma[i - 1] + alpha);
+    }
+    delete [] gamma;
+    return;
+}
 // Quit the programm
 // Big data
 // angles
+// Print change
+//
+
