@@ -1,8 +1,6 @@
 #include <iostream>
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 #include <cmath>
+
 
 using namespace std;
 
@@ -15,13 +13,10 @@ struct regular_polygon {
     double *y;
 };
 
-void CountSquare(struct regular_polygon* reg_pol, int amount);
-void CountPerimeter(struct regular_polygon* reg_pol, int amount);
+void square_perimeter(int k ,struct regular_polygon* reg_pol, int amount, int* output);
 void SetData(regular_polygon* reg_pol, int amount, int* output);
 regular_polygon* AddStruct(regular_polygon* reg_pol, int amount);
 int* AddOutput(int amount, int* output);
-int* max_square(struct regular_polygon* reg_pol, int amount, int* output);
-int* max_perimeter(struct regular_polygon* reg_pol, int amount, int* output);
 void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output);
 void print(regular_polygon* OurPolygon, int amount, int* output);
 void check(regular_polygon* OurPolygon, int PolygonAmount, int* output);
@@ -42,25 +37,6 @@ int main()
 
 
 
-// Считаем площадь
-
-
-void CountSquare(struct regular_polygon* reg_pol, int amount)
-{
-    if (reg_pol[amount].length == 3) reg_pol[amount].square = reg_pol[amount].length * reg_pol[amount].length * sqrt(3) / 4;
-    if (reg_pol[amount].length == 4) reg_pol[amount].square = reg_pol[amount].length * reg_pol[amount].length;
-    else reg_pol[amount].square = 0.25 * reg_pol[amount].count_sides * reg_pol[amount].length * reg_pol[amount].length * pow(tan(M_PI / ((double)reg_pol[amount].count_sides)), -1.0);
-
-
-}
-
-// Считаем периметр
-
-void CountPerimeter(struct regular_polygon* reg_pol, int amount)
-{
-    reg_pol[amount].perimeter = reg_pol[amount].count_sides * reg_pol[amount].length;
-
-}
 
 
 // Создаём новую структуру и перезаписываем динамический массив структур
@@ -99,7 +75,6 @@ int* AddOutput(int amount, int* output)
         output = temp2;
         output[amount] = 1;
     }
-    cout << "OK, output also done" << endl;
     return output;
 }
 
@@ -131,6 +106,17 @@ void SetData(regular_polygon* reg_pol, int amount, int* output)
         if (reg_pol[amount].length > 0) flag = true;
     }
 
+    //square
+    if (reg_pol[amount].length == 3) reg_pol[amount].square = reg_pol[amount].length * reg_pol[amount].length * sqrt(3) / 4;
+    if (reg_pol[amount].length == 4) reg_pol[amount].square = reg_pol[amount].length * reg_pol[amount].length;
+    else
+    {
+        reg_pol[amount].square = 0.25 * reg_pol[amount].count_sides * reg_pol[amount].length * reg_pol[amount].length * pow(tan(M_PI / ((double)reg_pol[amount].count_sides)), -1.0);
+    }
+    //perimeter
+    reg_pol[amount].perimeter = reg_pol[amount].count_sides * reg_pol[amount].length;
+
+
     cout << "Enter vertex coordinates" << '\n';
     reg_pol[amount].x = new double[ reg_pol[amount].count_sides ];
     reg_pol[amount].y = new double[ reg_pol[amount].count_sides ];
@@ -155,72 +141,39 @@ void SetData(regular_polygon* reg_pol, int amount, int* output)
         if ( pramaya - Radius > 0) flag = true;
     }
     cout << "Good!" << endl;
-    CountSquare(reg_pol, amount);
-    CountPerimeter(reg_pol, amount);
+
 
     coordinates(reg_pol, amount);
 }
-
-int* max_square(regular_polygon* reg_pol, int amount, int* output)
-{
-    int* square_max = new int[amount];
-    if (amount == 0) cout << "there are no polygons" << endl;
-    else
-    {
-        int i_max = 0;
-        for (int i = 0; i < amount; i++)
-        {
-            if (((reg_pol[i].square - reg_pol[i_max].square) > 0) && (output[i] == 1)) i_max = i;
-        }
-        for (int i = 0; i < amount; i++)
-        {
-            if ( ((reg_pol[i].square - reg_pol[i_max].square) == 0) && (output[i] == 1) ) square_max[i] = i + 1;
-            else square_max[i] = -1;
-        }
-    }
-    return square_max;
-}
-
-int* max_perimeter(regular_polygon* reg_pol, int amount, int* output)
-{
-    int* perimeter_max = new int[amount];
-    if (amount == 0) cout << "there are no polygons" << endl;
-    else
-    {
-        int i_max = 0;
-        for (int i = 0; i < amount; i++)
-        {
-            if (((reg_pol[i].perimeter - reg_pol[i_max].perimeter) > 0) && (output[i] == 1) ) i_max = i;
-        }
-        for (int i = 0; i < amount; i++)
-        {
-            if (((reg_pol[i].perimeter - reg_pol[i_max].perimeter) == 0) && (output[i] == 1)) perimeter_max[i] = i + 1;
-            else perimeter_max[i] = -1;
-        }
-    }
-    return perimeter_max;
-}
+////////////   regpol several, not one
 
 
+/////// ОГРАНИЧЕНИЯ///////
 
 /////////////// МЕНЮ////////////////
 
 void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 {
     int chosenForDelete = 0;
+    cout << '\n' << "MENU" << '\n' << "----------------------" << '\n';
     cout << "Choose the action" << '\n';
-    cout << "1 - Add polygon         2 - Show polygons" << '\n';
-    cout << "3 - Delete polygon      4 - Square/perimeter " << '\n';
+    cout << "1 - Add polygon" << '\n';
+    cout << "2 - Show polygons" << '\n';
+    cout << "3 - Delete polygon" << '\n';
+    cout << "4 - Square/perimeter" << '\n';
     cout << "5 - Close the programm" << '\n';
-    int choose;
-    cin >> choose;
+    cout << '\n' << "Your input: ";
 
+    char choice = '0';
+    cin >> choice;
+    int choose = int(choice)-48;
+    //int choose;
+    //cin >> choose;
+    cout << '\n';
     switch (choose)
     {
     case 1:
-        cout << "OK, let's add a structure" << endl;
         OurPolygon = AddStruct(OurPolygon, PolygonAmount);
-        cout << "And output" << endl;
         output = AddOutput(PolygonAmount, output);
         SetData(OurPolygon, PolygonAmount, output);
         PolygonAmount++;
@@ -246,6 +199,7 @@ void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
         {
             cout << "As you wish" << '\n';
             output[chosenForDelete - 1] = 0;
+            //output = del_struct(output, chosenForDelete);
         }
         break;
     case 4:
@@ -282,16 +236,20 @@ void print(regular_polygon* reg_pol, int amount, int* output)
                 cout << "y" << j << ": " << reg_pol[i].y[j] << endl << endl;
             }
 
-            cout << "Square = " << reg_pol[amount - 1].square << '\n';
-            cout << "Perimeter = " << reg_pol[amount - 1].perimeter << '\n';
+            cout << "Square = " << reg_pol[i].square << '\n';
+            cout << "Perimeter= " << reg_pol[i].perimeter << '\n';
+
             cout << "Good job!" << '\n' << '\n';
             cout << "---------------------------" << endl;
         }
-        else for (int i = 0; i < 7; i++) cout << endl;
+        else
+        {
+            for (int i = 0; i < 7; i++) cout << '\n';
+        }
     }
 }
 
-/// УДОСТОВЕРИМСЯ ВЫХОДИТЬ ИЛИ НЕТ
+/// УДОСТОВЕРЕМСЯ ВЫХОДИТЬ ИЛИ НЕТ
 void check(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 {
     cout << "Are you sure that you want to quit? (1 - yes; 0 - no)" << '\n';
@@ -326,33 +284,20 @@ void submenu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
     {
     case 1:
         cout << "Let's look" << endl << "-----------------------" << endl;
-        int* sq;
-        sq = max_square(OurPolygon, PolygonAmount, output);
-        for (int i = 0; i < PolygonAmount; i++)
-        {
-            if (sq[i] != -1) cout << sq[i] << endl;
-            else continue;
-        }
+        square_perimeter(k , OurPolygon, PolygonAmount, output);
         cout << "That's all" << '\n';
-        delete[] sq;
         break;
     case 2:
         cout << "Let's look" << endl << "-----------------------" << endl;
-        int* per;
-        per = max_perimeter(OurPolygon, PolygonAmount, output);
-        for (int i = 0; i < PolygonAmount; i++)
-        {
-            if (per[i] != -1) cout << per[i] << endl;
-
-        }
+        square_perimeter(k , OurPolygon, PolygonAmount, output);
         cout << "That's all" << '\n';
 
-        delete[] per;
         break;
     case 3:
         break;
     default:
         cout << "Incorrect! Try again" << '\n';
+        submenu(OurPolygon, PolygonAmount, output);
         break;
     }
     return;
@@ -363,19 +308,105 @@ void submenu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 /// СЧИТАЕМ КООРДИНАТЫ
 void coordinates(struct regular_polygon* reg_pol, int amount)
 {
-    double Radius = reg_pol[amount].length / (2 * sin(M_PI / (reg_pol[amount].count_sides)));
-    double alpha = 2 * M_PI / reg_pol[amount].count_sides;
-    double phi = atan(reg_pol[amount].y[0]/reg_pol[amount].x[0]);
-    double Rx = Radius*cos(phi);
-    double Ry = Radius*sin(phi);
-    double O_x = reg_pol[amount].x[0] - Rx;
-    double O_y = reg_pol[amount].y[0] - Ry;
+    long double Radius = reg_pol[amount].length / (2 * sin(M_PI / (reg_pol[amount].count_sides)));
+    long double alpha = 2 * M_PI / reg_pol[amount].count_sides;
 
-    for (int i = 1; i < reg_pol[amount].count_sides; i++)
+    if ((reg_pol[amount].x[0] > 0) && (reg_pol[amount].y[0] > 0))
     {
-        reg_pol[amount].x[i] = O_x + Radius * cos(phi + i * alpha);
-        reg_pol[amount].y[i] = O_y + Radius * sin(phi + i * alpha);
+        long double phi = atan(reg_pol[amount].y[0]/reg_pol[amount].x[0]);
+        long double Rx = Radius*cos(phi);
+        long double Ry = Radius*sin(phi);
+        long double O_x = reg_pol[amount].x[0] - Rx;
+        long double O_y = reg_pol[amount].y[0] - Ry;
+        for (int i = 1; i < reg_pol[amount].count_sides; i++)
+        {
+            reg_pol[amount].x[i] = O_x + Radius * cos(phi + i * alpha);
+            reg_pol[amount].y[i] = O_y + Radius * sin(phi + i * alpha);
+        }
+    }
+    else if ((reg_pol[amount].x[0] < 0) && (reg_pol[amount].y[0] < 0))
+    {
+        long double phi = atan(reg_pol[amount].y[0]/reg_pol[amount].x[0]);
+        long double Rx = Radius*cos(phi);
+        long double Ry = Radius*sin(phi);
+        long double O_x = reg_pol[amount].x[0] + Rx;
+        long double O_y = reg_pol[amount].y[0] + Ry;
+        for (int i = 1; i < reg_pol[amount].count_sides; i++)
+        {
+            reg_pol[amount].x[i] = O_x - Radius * cos(phi + i * alpha);
+            reg_pol[amount].y[i] = O_y - Radius * sin(phi + i * alpha);
+        }
+    }
+    else if ((reg_pol[amount].x[0] < 0 ) && (reg_pol[amount].y[0] > 0))
+    {
+        long double phi = M_PI/2 + atan(reg_pol[amount].y[0]/reg_pol[amount].x[0]);
+        long double Rx = Radius*cos(phi);
+        long double Ry = Radius*sin(phi);
+        long double O_x = reg_pol[amount].x[0] + Rx;
+        long double O_y = reg_pol[amount].y[0] - Ry;
+        for (int i = 1; i < reg_pol[amount].count_sides; i++)
+        {
+            reg_pol[amount].x[i] = O_x - Radius * cos(phi - i * alpha);
+            reg_pol[amount].y[i] = O_y + Radius * sin(phi - i * alpha);
+        }
+    }
+    else if ((reg_pol[amount].x[0] > 0) && (reg_pol[amount].y[0] < 0))
+    {
+        long double phi = M_PI/2 + atan(reg_pol[amount].y[0]/reg_pol[amount].x[0]);
+        long double Rx = Radius*cos(phi);
+        long double Ry = Radius*sin(phi);
+        long double O_x = reg_pol[amount].x[0] - Rx;
+        long double O_y = reg_pol[amount].y[0] + Ry;
+        for (int i = 1; i < reg_pol[amount].count_sides; i++)
+        {
+            reg_pol[amount].x[i] = O_x + Radius * cos(phi - i * alpha);
+            reg_pol[amount].y[i] = O_y - Radius * sin(phi - i * alpha);
+        }
     }
 
     return;
+}
+void square_perimeter(int k ,struct regular_polygon* reg_pol, int amount, int* output)
+{
+    int i_max = 0;
+    if (k == 1)
+    {
+        if (amount == 0) cout << "there are no polygons" << endl;
+        else
+        {
+
+            for (int i = 0; i < amount; i++)
+            {
+                if (((reg_pol[i].square - reg_pol[i_max].square) > 0) && (output[i] == 1 )) i_max = i;
+            }
+            for (int i = i_max; i < amount; i++)
+            {
+                if (((reg_pol[i].square - reg_pol[i_max].square) == 0) && (output[i] == 1 ))
+                {
+                    cout << i + 1 << '\t';
+                }
+            }
+            cout << endl;
+        }
+    }
+    else if (k == 2)
+    {
+        if (amount == 0) cout << "there are no polygons" << endl;
+        else
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                if (((reg_pol[i].perimeter - reg_pol[i_max].perimeter) > 0) && (output[i] == 1 )) i_max = i;
+            }
+            for (int i = i_max; i < amount; i++)
+            {
+                if (((reg_pol[i].perimeter - reg_pol[i_max].perimeter) == 0) && (output[i] == 1 ))
+                {
+                    cout << i + 1 << '\t';
+                }
+            }
+            cout << endl;
+        }
+    }
+
 }
