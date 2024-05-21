@@ -78,7 +78,7 @@ int* AddOutput(int amount, int* output)
     return output;
 }
 
-// Заполняем новую структуру
+
 
 void SetData(regular_polygon* reg_pol, int amount, int* output)
 {
@@ -145,10 +145,9 @@ void SetData(regular_polygon* reg_pol, int amount, int* output)
 
     coordinates(reg_pol, amount);
 }
-////////////   regpol several, not one
 
 
-/////// ОГРАНИЧЕНИЯ///////
+
 
 /////////////// МЕНЮ////////////////
 
@@ -167,8 +166,6 @@ void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
     char choice = '0';
     cin >> choice;
     int choose = int(choice)-48;
-    //int choose;
-    //cin >> choose;
     cout << '\n';
     switch (choose)
     {
@@ -199,7 +196,6 @@ void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
         {
             cout << "As you wish" << '\n';
             output[chosenForDelete - 1] = 0;
-            //output = del_struct(output, chosenForDelete);
         }
         break;
     case 4:
@@ -217,7 +213,7 @@ void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
     return;
 }
 
-/// В Ы В О Д
+// ВЫВОД
 void print(regular_polygon* reg_pol, int amount, int* output)
 {
     for (int i = 0; i < amount; i++)
@@ -249,7 +245,7 @@ void print(regular_polygon* reg_pol, int amount, int* output)
     }
 }
 
-/// УДОСТОВЕРЕМСЯ ВЫХОДИТЬ ИЛИ НЕТ
+// ВЫХОДИТЬ ИЛИ НЕТ
 void check(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 {
     cout << "Are you sure that you want to quit? (1 - yes; 0 - no)" << '\n';
@@ -272,13 +268,14 @@ void check(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 }
 
 
-///ПОДМЕНЮШКА
+//ПОДМЕНЮШКА
 void submenu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 {
-    int k;
     cout << "What are you going to do?" << '\n';
     cout << "1 - Max Square" << endl << "2 - Max Perimeter"  << endl << "3 - quit" << endl;
-    cin >> k;
+    char choice = '0';
+    cin >> choice;
+    int k = int(choice)-48;
 
     switch (k)
     {
@@ -369,44 +366,19 @@ void coordinates(struct regular_polygon* reg_pol, int amount)
 void square_perimeter(int k ,struct regular_polygon* reg_pol, int amount, int* output)
 {
     int i_max = 0;
-    if (k == 1)
+    double* sq_per = new double[amount];   
+    if (amount == 0)
     {
-        if (amount == 0) cout << "there are no polygons" << endl;
-        else
-        {
-
-            for (int i = 0; i < amount; i++)
-            {
-                if (((reg_pol[i].square - reg_pol[i_max].square) > 0) && (output[i] == 1 )) i_max = i;
-            }
-            for (int i = i_max; i < amount; i++)
-            {
-                if (((reg_pol[i].square - reg_pol[i_max].square) == 0) && (output[i] == 1 ))
-                {
-                    cout << i + 1 << '\t';
-                }
-            }
-            cout << endl;
-        }
+        cout << "There are no polygons" << endl;
+        return;
     }
-    else if (k == 2)
-    {
-        if (amount == 0) cout << "there are no polygons" << endl;
-        else
-        {
-            for (int i = 0; i < amount; i++)
-            {
-                if (((reg_pol[i].perimeter - reg_pol[i_max].perimeter) > 0) && (output[i] == 1 )) i_max = i;
-            }
-            for (int i = i_max; i < amount; i++)
-            {
-                if (((reg_pol[i].perimeter - reg_pol[i_max].perimeter) == 0) && (output[i] == 1 ))
-                {
-                    cout << i + 1 << '\t';
-                }
-            }
-            cout << endl;
-        }
-    }
-
+    if (k == 1) for (int i = 0; i < amount; i++) sq_per[i] = reg_pol[i].square; 
+    else for (int i = 0; i < amount; i++) sq_per[i] = reg_pol[i].perimeter;  
+    
+    for (int j = 0; j < amount; j++)
+        if (((sq_per[j] - sq_per[i_max]) > 0) && (output[j] == 1)) i_max = j;
+    for (int p = i_max; p < amount; p++)
+        if (((sq_per[p] - sq_per[i_max]) == 0) && (output[p] == 1)) cout << p+1 << '\t';
+    cout << endl;
+    delete[] sq_per;
 }
