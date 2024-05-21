@@ -149,7 +149,7 @@ void SetData(regular_polygon* reg_pol, int amount, int* output)
 
 
 
-/////////////// МЕНЮ////////////////
+// МЕНЮ//
 
 void menu(regular_polygon* OurPolygon, int PolygonAmount, int* output)
 {
