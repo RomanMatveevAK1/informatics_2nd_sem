@@ -1,12 +1,12 @@
-﻿
+#include <iostream>                 // "Was mich nicht umbringt, macht mich nur stärker".                 
 #include "cmath"
-#include <iostream>
 #include <limits>
 #include <string>
 #include <ctime>
-using namespace std;
+using namespace std;                                     
 
-int s = 0; 
+int s = 0;
+
 double In_Prove(double var);
 int In_Prove(int var);
 
@@ -26,15 +26,18 @@ public:
         status = check_status(mileage, speed);
         return current_mileage;
     }
+
     virtual void output();
 
-    int get_status(){ return status; }
+    int get_status(){ 
+        return status; 
+    }
 };
 
 class engine {
 protected:
     double eng_power; 
-    double engIntake; //[л/км]
+    double eng_intake; //[л/км]
 
 public:
     inline double calc_Intake() 
@@ -43,8 +46,8 @@ public:
     }
     engine() 
     { 
-        engIntake = 0; 
-        eng_power = 0;
+        eng_intake = 0;   // Потребление двигателя
+        eng_power = 0;   // Мощность двигателя
     };
     void def_engine(double v_power);
     virtual void output();
@@ -55,18 +58,18 @@ protected:
     double current_fuel; //[л];
 public:
     double TankCapacity; //[л]
-    void calculate_cur_fuel(double engIntake, double mileage, double Refuel);
+    void calculate_cur_fuel(double eng_intake, double mileage, double Refuel);
     fuel_system() { TankCapacity = 0; current_fuel = 0; };
-    void def_fuel_system(double capacity, double engIntake, double mileage);
+    void def_fuel_system(double capacity, double eng_intake, double mileage);
     virtual void output();
 };
 
 class vehicle : public engine, public fuel_system {
 private:
-    int Nwheels;  // [шт]
+    int cnt_wheels;  // [шт]
     double speed; //[км/ч]
     double Time;    //[ч]
-    int damaged_wheels = 0;
+    int damaged_wheels = 0; // [шт]
     double mileage; // [км]
     double Refuel; 
 
@@ -74,7 +77,7 @@ public:
     wheel* ptr_wheel;
     string name;
     vehicle() {
-        name = "ADDVEHICLE";
+        name = "AAAAAA";
         Time = mileage = Refuel = damaged_wheels = 0;
         ptr_wheel = 0;
     }
@@ -82,36 +85,36 @@ public:
     vehicle(string v_name, int wheels) {
         mileage = damaged_wheels = 0;
         setName(v_name);
-        setNwheels(wheels);
+        set_cnt_wheels(wheels);
         ptr_wheel = new wheel[wheels];
         for (int i = 0; i < wheels; i++) {
             ptr_wheel[i] = wheel();
         }
-        def_fuel_system(0, engIntake, mileage);
+        def_fuel_system(0, eng_intake, mileage);
         def_engine(0);
-        calculateSpeed();
+        calc_Speed();
     }
 
-    void calculateSpeed();
+    void calc_Speed();
 
     void setName(string v_name){ 
         name = v_name; 
     }
 
-    void setNwheels(int wheels){ 
-        Nwheels = wheels; 
+    void set_cnt_wheels(int wheels){
+        cnt_wheels = wheels;
     }
 
     void setMileage(double v_track){ 
         mileage = v_track; 
     }
 
-    ~vehicle() { 
-        cout << "Destruction of " << name << endl; 
+    ~vehicle() {                                          // В дело вступает деструктор
+        cout << "Destructor \t" << name << endl; 
     }
     
-    inline void calculateRaceTime(double raceLength){
-        Time = (raceLength / speed);
+    inline void calculateRaceTime(double Length){
+        Time = (Length / speed);
     };
 
     double get_Time() { 
@@ -126,12 +129,12 @@ public:
         return speed; 
     };
 
-    void calculateRefuel(double raceLength);
+    void calc_Refuel(double Length);
 
     void time_display();
 
-    int getNwheels() { 
-        return Nwheels; 
+    int get_cnt_wheels() {
+        return cnt_wheels;
     }
 
     void number_of_damaged_wheels();
@@ -142,18 +145,331 @@ public:
     friend void outputRes(vehicle*& car, int s);
 
     friend ostream& operator<<(ostream& stream, const vehicle& obj){
-        return stream << "the number of wheels: " << obj.Nwheels << ";\n"
+        return stream << "the number of wheels: " << obj.cnt_wheels << ";\n"
             << "damaged wheels: " << obj.damaged_wheels << ";\n"
             << "speed: " << obj.speed << " km/h;\n"
             << "mileage: " << obj.mileage << " km;\n"
             << "fuel capacity: " << obj.TankCapacity << "l;\n"
             << "current fuel: " << obj.current_fuel << "l\n"
-            << "engine power: " << obj.eng_power << " HP;\n"
-            << "engine intake: " << obj.engIntake << " l/100km;" << endl;
+            << "engine power: " << obj.eng_power << "hp\n"
+            << "engine intake: " << obj.eng_intake << " l/100km;" << endl;
     }
 };
 
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D76F393D-7548-4E68-B9FC-DEE560933EF8}
-	EndGlobalSection
-EndGlobal
+int menu(int& flag);
+void clean(int var = 1);
+void create_vehicle(vehicle*& adress, int& s, vehicle cars);
+
+
+int main() {
+    clean();
+    vehicle* adress = nullptr;
+    double track = 0;
+    int flag = 1;
+    int rez = 0;
+    while (flag == 1) {
+        int choice = 10;
+        choice = menu(rez);
+        if ((choice > 5) || (choice < 0)) {
+            cout << "\nError! Try again!\n";
+        }
+
+        switch (choice) {
+        case (0): {
+            cout << "Are you sure that you want to exit?\n 1 - Yes\n 0 - Go back\n";
+            int exit = 2;
+            exit = In_Prove(exit);
+            if (exit == 1) {
+                flag = 0;
+                break;
+            }
+            else {
+                clean();
+            }
+            break;
+        }
+                delete[] adress;
+                for (int i = 0; i < s; i++) {
+                    delete[] adress[i].ptr_wheel;
+                }
+                break;
+
+        case (1): {
+            clean();
+            string v_name = "";
+            cout << "\nName of the car: ";
+            cin >> v_name;
+            int cnt_wheels = 0;
+            cout << "Number of wheels: ";
+            cnt_wheels = In_Prove(cnt_wheels);
+
+            while ((cnt_wheels < 2) || (cnt_wheels == 5) || (cnt_wheels == 7)) {
+                cout << "Uncorrect information! Try again:" << endl;
+                cnt_wheels = In_Prove(cnt_wheels);
+            }
+
+            vehicle cars(v_name, cnt_wheels);
+            clean();
+            create_vehicle(adress, s, cars);
+            rez = 0;
+            break;
+        }
+
+        case (2): {
+            clean();
+            for (int i = 0; i < s; i++) {
+                cout << adress[i].name << endl;
+                adress[i].output();
+            }
+            break;
+        }
+        case (3): {
+            clean();
+            cout << "Enter the length of the track (km): ";
+            track = In_Prove(track);
+            rez = 0;
+            break;
+        }
+
+        case (4): {
+            clean();
+            if (track == 0) {
+                cout << "Enter the length of the track!\n";
+                rez = 0;
+                break;
+            }
+            else {
+                for (int i = 0; i < s; i++) {
+                    adress[i].calculateRaceTime(track);
+                    adress[i].setMileage(track);
+                    for (int j = 0; j < adress[i].get_cnt_wheels(); j++) {
+                        adress[i].ptr_wheel[j].def_wheel(track, adress[i].get_speed());
+                    }
+                    adress[i].number_of_damaged_wheels();
+                    adress[i].calc_Refuel(track);
+                    adress[i].calculate_cur_fuel(adress[i].calc_Intake(), track, adress[i].get_Refuel());
+                    adress[i].calc_Speed();
+                }
+            }
+            break;
+        }
+
+        case (5): {
+            clean();
+            outputRes(adress, s);
+            break;
+        }
+
+        default:
+            clean();
+            break;
+        }
+    }
+
+    return 0;
+}
+
+void clean(int var) {
+    for (int i = 0; i < 3; i = i + 1) {
+        cout << "\n";
+    }
+}
+int menu(int& rez) {
+    cout << "\n----------------------||MENU|-------------------------\n";
+    cout << "0 - EXIT\n";
+    cout << "1 - ADDING VECHICLE\n";
+    cout << "2 - INFORMATION ABOUT VECHICLE\n";
+    cout << "3 - ENTERING THE LENGTH OF THE TRACK\n";
+    cout << "4 - ROUTE CALCULATING\n";
+    if (rez == 1)
+        cout << "5 - RESULTS OF LAST RASE\n";
+    int choice = 0;
+    choice = In_Prove(choice);
+
+    if (choice == 4){
+        rez = 1;
+    }
+    return choice;
+}
+
+double In_Prove(double var) {
+    cin >> var;
+    if (cin.fail() || var <= 0) {
+        while (!(cin >> var) || var <= 0) {
+            cout << "Uncorrect input! Try again\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+    return var;
+}
+
+void create_vehicle(vehicle*& adress, int& s, vehicle cars) {
+    vehicle* tempArray;
+
+    if (adress != nullptr) {
+        tempArray = new vehicle[s + 1];              
+        for (int i = 0; i < s; i++) {
+            tempArray[i] = adress[i];
+        }
+        delete[] adress;
+    }
+    else {
+        tempArray = new vehicle[1];
+    }
+
+    tempArray[s] = cars;
+    adress = tempArray;
+    s++;
+}
+
+vehicle* RatingRes(vehicle*& adress, int s){
+    vehicle* res = new vehicle[s];
+    vehicle* rez_copy = new vehicle[1];
+
+    for (int i = 0; i < s; i++) {
+        res[i] = adress[i];
+    }
+
+    for (int i = 0; i < s; i++) {
+        for (int j = 0; j < s; j++) {
+            if ((res[i].get_Time() - res[j].get_Time() < 0) &&
+                (res[i].get_Refuel() - res[i].get_Refuel() <= 0)) {
+                rez_copy[0] = res[i];
+                res[i] = res[j];
+                res[j] = rez_copy[0];
+            }
+        }
+    }
+
+    delete[] rez_copy;
+    return res;
+}
+
+void outputRes(vehicle*& adress, int s){
+    vehicle* res = RatingRes(adress, s);
+    
+    for (int i = 0; i < s; i++) {
+        cout << res[i].name << endl;
+        res[i].time_display();
+        cout << "Refuel times: " << int(res[i].Refuel) << endl;
+    }
+
+    delete[] res;                                                  // Не забываем очитстить память!
+}
+
+
+int In_Prove(int var) {
+    cin >> var;
+
+    if (cin.fail() || var < 0) {
+        while (!(cin >> var) || var < 0) {
+            cout << "Uncorrect input! Try again\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    return var;
+}
+
+int wheel::check_status(double mileage, double speed){                //Чем больше пробег и скорость, тем больше шансов у колеса сломаться
+    double p = (1 / (mileage * sqrt(speed)));
+    if (p >= 0.5){
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}
+
+void wheel::output(){
+    if (status == 1){
+        cout << "Wheel is damaged (((" << endl;
+    }
+
+    else{
+        cout << "Yee! Wheel is not damaged" << endl;
+    }
+}
+
+void engine::output() {
+    cout << "engine power: \t" << eng_power << " hp" << endl;
+    cout << "engine intake: \t" << eng_intake << " l/100 km" << endl;
+}
+
+void engine::def_engine(double v_power) {
+    cout << "Engine power (hp): ";
+    v_power = In_Prove(v_power);
+    eng_power = v_power;
+    eng_intake = calc_Intake();
+}
+
+void fuel_system::calculate_cur_fuel(double eng_intake, double mileage, double Refuel){
+    if (Refuel == 0) {
+        current_fuel = double(TankCapacity - ((eng_intake / 100) * mileage));
+    }
+
+    else {
+        current_fuel = (((Refuel)*TankCapacity) - ((eng_intake / 100) * mileage));
+    }
+}
+void fuel_system::def_fuel_system(double capacity, double eng_intake, double mileage) {
+    cout << "Fuel capacity: \n";
+    capacity = In_Prove(capacity);
+    TankCapacity = capacity;
+    current_fuel = capacity;
+}
+
+void fuel_system::output() {
+    cout << "Fuel capacity: " << TankCapacity << "l" << endl;
+    cout << "Current level of fuel: " << current_fuel << "l" << endl;
+}
+
+void vehicle::output() {
+    cout << "Number of wheels: " << cnt_wheels << ";\n"
+        << "Damaged wheels: " << damaged_wheels << ";\n"
+        << "Speed: " << speed << " km/h;\n"
+        << "Mileage: " << mileage << " km;" << endl;
+    engine::output();
+    fuel_system::output();
+}
+
+void vehicle::time_display() {
+    double t = this -> Time;
+    int hours = int(t);
+    double cur_time = (t - hours) * 60;
+    int minutes = int(cur_time);
+    int seconds = int((cur_time - minutes) * 60);
+    cout << "time: " << hours << ":" << minutes << ":" << seconds << endl;
+}
+
+void vehicle::calc_Speed() {
+    if (damaged_wheels == 0) {
+        speed = double(fabs(sqrt(eng_power) * (70.0 / double(cnt_wheels) - 2.5) * (current_fuel / 100.0)));
+    }
+    // Функция fabs() возвращает абсолютное значение числа
+    else
+    {
+        speed = (fabs(sqrt(eng_power) * (70.0 / double(cnt_wheels) - 2.5) * (current_fuel / 100.0)) / (pow(2., double(damaged_wheels))));
+    }
+}
+
+void vehicle::number_of_damaged_wheels(){
+    int count = 0;
+    for (int i = 0; i < cnt_wheels; i++) {
+        if (ptr_wheel[i].get_status() == 1){
+            count++;
+        }
+    }
+    damaged_wheels = count;
+}
+
+void vehicle::calc_Refuel(double Length) {
+    double Refuel = (Length * (eng_intake / 100)) / TankCapacity;
+    if (Refuel > 1)
+        this -> Refuel = ceil(Refuel); //ceil(arg) в C++ вычисляет ближайшее целое число, большее или равное arg, 
+                                             // и возвращает его в виде числа с плавающей точкой
+    else
+        this -> Refuel = floor(Refuel); // Функция floor () в C++ возвращает максимально возможное целочисленное значение, которое меньше или равно заданному аргументу. 
+}
